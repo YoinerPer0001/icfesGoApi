@@ -58,6 +58,7 @@ class AuthService {
         name: user.dataValues.name + " " + user.dataValues.last_name,
         email: user.dataValues.email,
         rol: user.dataValues.rol.name,
+        perfil_completed: user.dataValues.perfil_completed
       };
 
       return new ApiResponse(200, "success", dataSend);
@@ -80,6 +81,7 @@ class AuthService {
         name: user.dataValues.name + " " + user.dataValues.last_name,
         email: user.dataValues.email,
         rol: user.dataValues.rol.name,
+        perfil_completed: user.dataValues.perfil_completed
       };
    
 

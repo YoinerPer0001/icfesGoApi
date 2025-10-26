@@ -41,6 +41,9 @@ User.init(
     firebase_uid:{
         type: DataTypes.TEXT,
         allowNull:true
+    },
+    perfil_completed :{
+      type: DataTypes.BOOLEAN
     }
   },
   {
