@@ -52,6 +52,8 @@ class AuthController {
 
   async signImageKit(req: Request, res: Response) {
 
+    console.log(req.body)
+
     try {
 
   
