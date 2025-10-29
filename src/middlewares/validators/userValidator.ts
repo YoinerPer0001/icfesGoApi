@@ -51,3 +51,30 @@ export const loginNoFirebaseValidator = [
   }
 ];
 
+export const userCreateValidator = [
+  body("name")
+    .notEmpty().withMessage("Name is required")
+    .isString().withMessage("Name must be a string"),
+
+  body("last_name")
+    .notEmpty().withMessage("Last name is required")
+    .isString().withMessage("Last name must be a string"),
+
+  body("email")
+    .notEmpty().withMessage("Email is required")
+    .isEmail().withMessage("Email must be a valid email address"),
+
+  body("rol_id")
+    .notEmpty().withMessage("Role ID is required")
+    .isUUID().withMessage("Role ID must be a valid UUID"),
+
+  body("cellphone")
+    .optional()
+    .isString().withMessage("Cellphone must be a string")
+    .isLength({ min: 10, max: 10 }).withMessage("Cellphone must be 10 characters long"),
+
+  (req: Request, res: Response, next: NextFunction) => {
+    validateResult(req, res, next);
+  },
+];
+

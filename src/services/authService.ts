@@ -1,3 +1,8 @@
+import {
+  UniqueConstraintError,
+  ValidationErrorItem,
+  type CreationAttributes,
+} from "sequelize";
 import { db } from "../core/db.js";
 import admin from "../core/firebase.js";
 import { ApiResponse } from "../core/responseSchedule.js";
@@ -58,7 +63,7 @@ class AuthService {
         name: user.dataValues.name + " " + user.dataValues.last_name,
         email: user.dataValues.email,
         rol: user.dataValues.rol.name,
-        perfil_completed: user.dataValues.perfil_completed
+        perfil_completed: user.dataValues.perfil_completed,
       };
 
       return new ApiResponse(200, "success", dataSend);
@@ -75,20 +80,52 @@ class AuthService {
         return new ApiResponse(404, "error", null);
       }
 
-      console.log(user.dataValues.name)
+      console.log(user.dataValues.name);
 
       const dataSend = {
         name: user.dataValues.name + " " + user.dataValues.last_name,
         email: user.dataValues.email,
         rol: user.dataValues.rol.name,
-        perfil_completed: user.dataValues.perfil_completed
+        perfil_completed: user.dataValues.perfil_completed,
       };
-   
 
       return new ApiResponse(200, "success", dataSend);
-
     } catch (error) {
-      console.log("ERROR AWUI")
+      console.log("ERROR AWUI");
+      return new ApiResponse(500, (error as Error).message, null);
+    }
+  }
+
+  async register(
+    data: CreationAttributes<User>
+  ): Promise<ApiResponse<DataSendLogin | null>> {
+    try {
+      const created = await authRepository.createUser(data);
+      if (!created) {
+        return new ApiResponse(500, "error", null);
+      }
+
+      console.log(created.dataValues);
+
+      const dataSend = {
+        name: created.dataValues.name + " " + created.dataValues.last_name,
+        email: created.dataValues.email,
+        rol: created.dataValues.rol.name,
+        perfil_completed: created.dataValues.perfil_completed,
+      };
+
+      return new ApiResponse(200, "success", dataSend);
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        console.log(error);
+        const errors = (error as UniqueConstraintError).errors;
+        let message = "";
+        errors.forEach((e) => {
+          message = e.message;
+        });
+        return new ApiResponse(409, message, null);
+      }
+
       return new ApiResponse(500, (error as Error).message, null);
     }
   }

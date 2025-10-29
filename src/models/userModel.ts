@@ -20,9 +20,8 @@ User.init(
       allowNull: false,
     },
     last_name: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
+      type: DataTypes.STRING(100),
+      allowNull: false
     },
     email: {
       type: DataTypes.STRING(100),
@@ -31,8 +30,7 @@ User.init(
     },
     password: {
       type: DataTypes.TEXT,
-      allowNull: false,
-      unique: true,
+      allowNull: true,
     },
     rol_id: {
      type: DataTypes.UUIDV4,
@@ -43,7 +41,12 @@ User.init(
         allowNull:true
     },
     perfil_completed :{
-      type: DataTypes.BOOLEAN
+      type: DataTypes.BOOLEAN,
+      defaultValue : false
+    },
+    cellphone:{
+      type: DataTypes.STRING(10),
+      allowNull: false
     }
   },
   {
