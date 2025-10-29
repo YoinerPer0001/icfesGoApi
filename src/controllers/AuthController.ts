@@ -63,7 +63,7 @@ class AuthController {
         header: {
         alg: "HS256",
         typ: "JWT",
-        kid: req.body.uploadPayload.publicKey,
+        kid: req.body.publicKey,
       }});
 
       res.status(200).json({ code:200 , message: "success", data: {token} });
