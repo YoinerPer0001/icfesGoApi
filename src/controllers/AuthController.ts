@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import authService from "../services/authService.js";
 import * as crypto from "crypto";
 import 'dotenv/config'
+import jwt from 'jsonwebtoken'
 
 class AuthController {
   public async login(req: Request, res: Response) {
@@ -50,17 +51,26 @@ class AuthController {
   }
 
   async signImageKit(req: Request, res: Response) {
-    const privateKey = process.env.IMAGEKIT_PRIVATE_KEY  ?? "";
-    const token = crypto.randomBytes(16).toString("hex");
-    const expire = Math.floor(Date.now() / 1000) + 2400; // expira en 40 min
 
-    const signature = crypto
-      .createHmac("sha1", privateKey)
-      .update(token + expire)
-      .digest("hex");
+    try {
 
-    res.json({ signature, token, expire });
+  
+      const token = await jwt.sign(req.body.uploadPayload, process.env.IMAGEKIT_PRIVATE_KEY ?? "",
+        {
+        expiresIn: req.body.expire,
+        header: {
+        alg: "HS256",
+        typ: "JWT",
+        kid: process.env.IMAGEKIT_PUBLIC_KEY,
+      }});
+
+      res.status(200).json({ code:200 , message: "success", data: {token} });
+      
+    } catch (error) {
+      res.status(500).json({ message: error, data: {} });
+    }
   }
+
 }
 
 export default new AuthController();
