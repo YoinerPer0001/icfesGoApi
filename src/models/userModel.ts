@@ -1,6 +1,7 @@
 import { DataTypes, Model, UUIDV4 } from "sequelize";
 import { db } from "../core/db.js";
 import Roles from "./rolesModel.js";
+import Cities from "./citiesModel.js";
 
 class User extends Model {}
 
@@ -47,6 +48,10 @@ User.init(
     cellphone:{
       type: DataTypes.STRING(10),
       allowNull: false
+    },
+    city_id: {
+      type:DataTypes.UUID,
+      allowNull:true
     }
   },
   {
@@ -55,6 +60,8 @@ User.init(
   }
 );
 
+Cities.hasMany(User, {foreignKey: "user_id" , as : "users"})
+User.belongsTo(Cities, {foreignKey: "user_id", as: "city"})
 
 Roles.hasMany(User, {foreignKey: "rol_id", as: "users"})
 User.belongsTo(Roles, {foreignKey: "rol_id", as: "rol"})
