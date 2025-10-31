@@ -5,6 +5,6 @@ import { authenticateFirebase } from "../middlewares/authFirebase.js";
 const PruebasRoutes = express.Router();
 
 // Obtener todas las pruebas
-PruebasRoutes.get("/pruebas/all", pruebasController.getAll);
+PruebasRoutes.get("/pruebas/all", authenticateFirebase, pruebasController.getAll);
 
 export default PruebasRoutes;

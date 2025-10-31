@@ -18,7 +18,7 @@ export async function authenticateFirebase(
     try {
         const decodedToken = await admin.auth().verifyIdToken(idToken ?? "");
         (req as any).uid = decodedToken.uid; // lo guardamos en la request
-        console.log(decodedToken)
+       
         next();
     } catch (error) {
         console.error(error);

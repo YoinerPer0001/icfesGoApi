@@ -85,6 +85,22 @@ class AuthController {
     }
   }
 
+
+  async updateStudentInfo(req: Request, res: Response){
+    try {
+
+      const uid = (req as any).uid;
+      const body = req.body
+      console.log(body)
+      console.log(uid)
+      const response = await authService.UpdateStudentInfo(uid,body.dataUser,body.dataStudent, body.listAreas)
+      res.status(response.code).json(response);
+
+    } catch (error) {
+       res.status(500).json({ message: error, data: {} });
+    }
+  }
+
   
 }
 

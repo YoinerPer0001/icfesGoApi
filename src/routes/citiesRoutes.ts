@@ -5,6 +5,6 @@ import { authenticateFirebase } from "../middlewares/authFirebase.js";
 const CitiesRoutes = express.Router();
 
 // Obtener todas las ciudades
-CitiesRoutes.get("/cities/all", citiesController.getAll);
+CitiesRoutes.get("/cities/all", authenticateFirebase, citiesController.getAll);
 
 export default CitiesRoutes;

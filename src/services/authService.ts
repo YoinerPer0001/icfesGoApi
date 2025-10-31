@@ -10,11 +10,16 @@ import type User from "../models/userModel.js";
 import authRepository from "../repository/authRepository.js";
 import userRepository from "../repository/userRepository.js";
 import bcrypt from "bcrypt";
+import type StudentInfo from "../models/StudentInfoModel.js";
+import studentInfoRepository from "../repository/studentInfoRepository.js";
+import userAreasRepository from "../repository/userAreasRepository.js";
+import type Areas from "../models/areasModel.js";
 
 interface DataSendLogin {
   name: string;
   email: string;
   rol: string;
+  perfil_completed:boolean
 }
 
 class AuthService {
@@ -128,6 +133,70 @@ class AuthService {
 
       return new ApiResponse(500, (error as Error).message, null);
     }
+  }
+
+  async UpdateStudentInfo(
+    id_user:string,
+    dataUser:Partial<CreationAttributes<User>>, //ciudad
+    dataStudent:Partial<CreationAttributes<StudentInfo>>, //id_grado y test_type_id
+    listAreas: Array<Partial<CreationAttributes<Areas>>> // lista name areas
+  ) {
+    const transaction = await db.transaction()
+
+    try {
+
+      const user = await userRepository.findByFirebaseId(id_user)
+      console.log(user)
+
+      if(!user){
+        return new ApiResponse(403, "client error: invalid user", null);
+      }
+
+      dataStudent.user_id = user.dataValues.id
+
+      const studentUpdate = await studentInfoRepository.updateOrCreateStudentInfo(user.dataValues.id, dataStudent)
+      if(!studentUpdate[0]){
+        console.log(studentUpdate)
+        transaction.rollback()
+        return new ApiResponse(500, "server error: update Student", null);
+      }
+
+      
+      for (let area of listAreas){
+          area.id_user = user.dataValues.id
+          console.log(area)
+          const createUserAreas = await userAreasRepository.create(area, {transaction})
+          if(!createUserAreas){
+            transaction.rollback()
+            return new ApiResponse(500, "server error: create areas", null);
+          }
+      }
+
+
+      dataUser.perfil_completed = true
+      const userUpdated = await userRepository.update(user.dataValues.id, dataUser, {transaction})
+      if(!userUpdated){
+        transaction.rollback()
+        return new ApiResponse(500, "server error: update User", null);
+      }
+
+
+      transaction.commit()
+
+      const dataSend = {
+        name: user.dataValues.name + " " + user.dataValues.last_name,
+        email: user.dataValues.email,
+        rol: user.dataValues.rol.name,
+        perfil_completed: true,
+      };
+
+      return new ApiResponse(200, "success", dataSend);
+      
+    } catch (error) {
+      transaction.rollback()
+      return new ApiResponse(500, (error as Error).message, null);
+    }
+
   }
 }
 

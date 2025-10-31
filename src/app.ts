@@ -7,6 +7,7 @@ import citiesRepository from './repository/citiesRepository.js';
 import PruebasRoutes from './routes/pruebasRoutes.js';
 import GradosRoutes from './routes/gradosRoutes.js';
 import CitiesRoutes from './routes/citiesRoutes.js';
+import AreasRoutes from './routes/areasRoutes.js';
 
 interface City {
   id: number,
@@ -36,6 +37,7 @@ app.use(rootUrl, RolesRoutes)
 app.use(rootUrl, PruebasRoutes)
 app.use(rootUrl, GradosRoutes)
 app.use(rootUrl, CitiesRoutes)
+app.use(rootUrl, AreasRoutes)
 
 app.listen(PORT, ()=>{
   console.info(`Success server in port : ${PORT}`)

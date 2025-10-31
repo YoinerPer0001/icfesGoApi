@@ -1,4 +1,4 @@
-import { type CreationAttributes } from "sequelize";
+import { Transaction, type CreationAttributes } from "sequelize";
 import UserAreas from "../models/userAreasModel.js";
 import Areas from "../models/areasModel.js";
 
@@ -10,8 +10,13 @@ class UserAreasRepository {
     });
   }
 
-  async create(data: CreationAttributes<UserAreas>): Promise<UserAreas> {
-    return await UserAreas.create(data);
+  async create(
+    data: CreationAttributes<UserAreas>,
+    options?: { transaction?: Transaction | null }
+  ): Promise<UserAreas> {
+    return await UserAreas.create(data, {
+      transaction: options?.transaction || null,
+    });
   }
 
   async delete(id_user: string, id_area: string): Promise<number> {

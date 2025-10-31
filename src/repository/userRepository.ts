@@ -26,7 +26,7 @@ class UserRepository {
     }
 
     async update(id:string, data:Partial<CreationAttributes<User>>, options?:{transaction:Transaction | null}) : Promise<number> {
-        const [affectedRows] = await User.update(data, {where: {id: id}, transaction: options?.transaction ?? null})
+        const [affectedRows] = await User.update(data, {where: {id: id}, transaction: options?.transaction ?? null, returning: true})
         return affectedRows
     }
 

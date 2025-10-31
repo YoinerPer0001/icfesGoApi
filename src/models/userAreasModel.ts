@@ -19,7 +19,7 @@ UserAreas.init(
       primaryKey: true,
     },
   },
-  { sequelize: db, modelName: "user_areas", timestamps: false }
+  { sequelize: db, modelName: "user_areas" }
 );
 
 User.belongsToMany(Areas, { through: UserAreas, foreignKey: "id_user", as: "areas" });

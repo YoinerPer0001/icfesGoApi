@@ -60,8 +60,8 @@ User.init(
   }
 );
 
-Cities.hasMany(User, {foreignKey: "user_id" , as : "users"})
-User.belongsTo(Cities, {foreignKey: "user_id", as: "city"})
+Cities.hasMany(User, {foreignKey: "city_id" , as : "users"})
+User.belongsTo(Cities, {foreignKey: "city_id", as: "city"})
 
 Roles.hasMany(User, {foreignKey: "rol_id", as: "users"})
 User.belongsTo(Roles, {foreignKey: "rol_id", as: "rol"})
