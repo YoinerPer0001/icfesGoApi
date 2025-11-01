@@ -101,6 +101,28 @@ class AuthController {
     }
   }
 
+  async updateTutorInfo(req: Request, res: Response){
+    try {
+
+      const uid = (req as any).uid;
+      const body = req.body
+
+      console.log(body)
+      
+      const dataUser = body.dataUser
+      const dataTutor = body.dataTutor
+      const areas = body.listAreas
+      const payament_info = body.payament_info
+      const certificates = body.certificates
+
+      const response = await authService.updateTutorInfo(uid, dataUser,dataTutor,areas,payament_info, certificates)
+      res.status(response.code).json(response);
+
+    } catch (error) {
+       res.status(500).json({ message: error, data: {} });
+    }
+  }
+
   
 }
 

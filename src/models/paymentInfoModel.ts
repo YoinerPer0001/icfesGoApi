@@ -32,8 +32,12 @@ PaymentInfo.init(
       type: DataTypes.ENUM("ahorros", "corriente"),
       allowNull: false,
     },
+    bank: {
+      type: DataTypes.ENUM("Nequi", "Bancolombia"),
+      allowNull: false,
+    }
   },
-  { sequelize: db, modelName: "payment_info" }
+  { sequelize: db, modelName: "payment_info", tableName: "payment_info" }
 );
 
 TutorInfo.hasOne(PaymentInfo, { foreignKey: "tutor_id", as: "payment_info" });

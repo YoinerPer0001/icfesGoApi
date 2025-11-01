@@ -13,17 +13,16 @@ Certificates.init({
         primaryKey: true,
         allowNull: false
     },
+    name:{
+        type: DataTypes.TEXT,
+    },
     tutor_id:{
         type: DataTypes.UUID,
         allowNull: false
     },
     url_resource:{
         type: DataTypes.TEXT,
-    },
-    issued_at:{
-        type: DataTypes.DATE,
-        defaultValue: Date.now()
-    },
+    }
 
 }, {sequelize: db, modelName: "certificates"})
 

@@ -90,16 +90,12 @@ class StudentInfoRepository {
   }
 
 
-  async updateOrCreateStudentInfo(
-  id: string,
+  async Create(
   data: Partial<CreationAttributes<StudentInfo>>,
   options?: { transaction?: Transaction | null }
-): Promise<[StudentInfo, boolean | null]> {
-  const [record, created] = await StudentInfo.upsert(
-    { id, ...data }, // el id debe estar dentro del objeto
-    { transaction: options?.transaction || null }
-  );
-  return [record, created];
+): Promise<StudentInfo | null> {
+  return await StudentInfo.create(data, { transaction: options?.transaction || null });
+  
 }
 
 

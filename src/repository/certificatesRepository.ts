@@ -20,8 +20,8 @@ class CertificatesRepository {
     });
   }
 
-  async create(data: CreationAttributes<Certificates>): Promise<Certificates> {
-    return await Certificates.create(data);
+  async create(data: CreationAttributes<Certificates>, options?: { transaction?: Transaction | null }): Promise<Certificates> {
+    return await Certificates.create(data, {transaction: options?.transaction ?? null});
   }
 
   async delete(id: string): Promise<number> {
