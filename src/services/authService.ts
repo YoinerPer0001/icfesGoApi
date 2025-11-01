@@ -161,10 +161,7 @@ class AuthService {
       dataStudent.user_id = user.dataValues.id;
 
       const studentUpdate =
-        await studentInfoRepository.Create(
-          user.dataValues.id,
-          dataStudent
-        );
+        await studentInfoRepository.Create(dataStudent, {transaction});
       if (!studentUpdate) {
         console.log(studentUpdate);
         transaction.rollback();
