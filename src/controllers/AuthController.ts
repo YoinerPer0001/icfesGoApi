@@ -40,7 +40,7 @@ class AuthController {
         last_name: data.last_name,
         email: data.email,
         rol_id: data.rol_id,
-        cellphone: data.cellphone,
+        cellphone: data.cellphone
       };
 
       const response = await authService.register(creationData);

@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { body, check, param } from "express-validator";
+import { body, check, param, query } from "express-validator";
 import { validateResult } from "../../core/validateResult.js";
 
 export const updateUserValidator = [
@@ -78,3 +78,14 @@ export const userCreateValidator = [
   },
 ];
 
+export const getTutorValidator = [
+  query("page")
+    .notEmpty().withMessage("page is required"),
+
+  query("limit")
+    .notEmpty().withMessage("limit name is required")
+    .isNumeric().withMessage("limit name must be a number"),
+  (req: Request, res: Response, next: NextFunction) => {
+    validateResult(req, res, next);
+  },
+];

@@ -52,6 +52,10 @@ User.init(
     city_id: {
       type:DataTypes.UUID,
       allowNull:true
+    },
+    photo_url: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   },
   {

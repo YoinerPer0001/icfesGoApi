@@ -13,6 +13,10 @@ export const createStudentDataValidator = [
     .exists().withMessage("city_id is required")
     .isUUID().withMessage("city_id must be a valid UUID"),
 
+     body("dataUser.photo_url")
+  .exists().withMessage("photo_url is required")
+  .isURL().withMessage("photo_url must be a url"),
+
 
   body("dataStudent")
     .exists().withMessage("dataStudent is required")
@@ -50,6 +54,9 @@ export const createTutorDataValidator = [
   body("dataUser.city_id")
     .exists().withMessage("city_id is required")
     .isUUID().withMessage("city_id must be a valid UUID"),
+  body("dataUser.photo_url")
+  .exists().withMessage("photo_url is required")
+  .isURL().withMessage("photo_url must be a url"),
 
   // Validación de dataTutor
   body("dataTutor")

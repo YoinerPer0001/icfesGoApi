@@ -22,8 +22,23 @@ UserAreas.init(
   { sequelize: db, modelName: "user_areas" }
 );
 
-User.belongsToMany(Areas, { through: UserAreas, foreignKey: "id_user", as: "areas" });
-Areas.belongsToMany(User, { through: UserAreas, foreignKey: "id_area", as: "users" });
+User.hasMany(UserAreas, {foreignKey: "id_user", as: "list_areas" });
+
+Areas.hasMany(UserAreas, {foreignKey: "id_area", as: "areas"})
+
+User.belongsToMany(Areas, {
+  through: UserAreas,
+  foreignKey: "id_user",
+  otherKey: "id_area",
+  as: "areas"
+});
+
+Areas.belongsToMany(User, {
+  through: UserAreas,
+  foreignKey: "id_area",
+  otherKey: "id_user",
+  as: "users"
+});
 
 export default UserAreas;
 
