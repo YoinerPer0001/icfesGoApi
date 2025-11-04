@@ -1,10 +1,10 @@
 import {
   literal,
   Sequelize,
-
   type CreationAttributes,
   type Transaction,
-  Op, type WhereOptions
+  Op,
+  type WhereOptions,
 } from "sequelize";
 import User from "../models/userModel.js";
 import Roles from "../models/rolesModel.js";
@@ -57,7 +57,7 @@ class UserRepository {
     return await User.findAll();
   }
 
-async getTutors(
+  async getTutors(
     page = 1,
     limit = 10,
     filters?: {
@@ -76,20 +76,15 @@ async getTutors(
     currentPage: number;
   }> {
     const offset = (page - 1) * limit;
-    const where: WhereOptions = {};
-
-    // 🔹 Filtro por ciudad
-    if (filters?.cityId) {
-      where["city_id"] = filters.cityId;
-    }
-
-    // 🔹 Filtro por nombre (name o last_name)
-    if (filters?.name) {
-      where[Op.or] = [
-        { name: { [Op.iLike]: `%${filters.name}%` } },
-        { last_name: { [Op.iLike]: `%${filters.name}%` } },
-      ];
-    }
+    const where: WhereOptions = {
+      ...(filters?.cityId && { city_id: filters.cityId }),
+      ...(filters?.name && {
+        [Op.or]: [
+          { name: { [Op.iLike]: `%${filters.name}%` } },
+          { last_name: { [Op.iLike]: `%${filters.name}%` } },
+        ],
+      }),
+    };
 
     // 🔹 Orden dinámico
     const order: any[] = [];
@@ -176,17 +171,19 @@ async getTutors(
               as: "reviews",
               separate: true,
               attributes: ["id", "rating", "text"],
-              include:{
+              include: [
+                {
                 model: User,
                 as: "student",
-                attributes: ["id", "name", "last_name", "photo_url" ]
-              }
+                attributes: ["id", "name", "last_name", "photo_url"],}
+              ],
             },
             {
-              model:Certificates, as: "certificates",
-              attributes: ["id", "name", "url_resource"]
-            }
-          ]
+              model: Certificates,
+              as: "certificates",
+              attributes: ["id", "name", "url_resource"],
+            },
+          ],
         },
       ],
       attributes: ["id", "name", "last_name", "photo_url", "cellphone"],
