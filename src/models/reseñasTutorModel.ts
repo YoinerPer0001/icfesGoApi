@@ -32,10 +32,10 @@ ReseñasTutor.init(
   { sequelize: db, modelName: "reseñas_tutor", tableName: "reseñas_tutor" }
 );
 
-TutorInfo.hasMany(ReseñasTutor, { foreignKey: "tutor_id", as: "reseñas" });
+TutorInfo.hasMany(ReseñasTutor, { foreignKey: "tutor_id", as: "reviews" });
 ReseñasTutor.belongsTo(TutorInfo, { foreignKey: "tutor_id", as: "tutor_info" });
 
-User.hasMany(ReseñasTutor, { foreignKey: "student_id", as: "reseñas_realizadas" });
+User.hasMany(ReseñasTutor, { foreignKey: "student_id", as: "user_reviews" });
 ReseñasTutor.belongsTo(User, { foreignKey: "student_id", as: "student" });
 
 export default ReseñasTutor;
