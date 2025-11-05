@@ -29,7 +29,17 @@ ReseñasTutor.init(
       validate: { min: 1, max: 5 },
     },
   },
-  { sequelize: db, modelName: "reseñas_tutor", tableName: "reseñas_tutor" }
+  {
+    sequelize: db,
+    modelName: "reseñas_tutor",
+    tableName: "reseñas_tutor",
+    indexes: [
+      {
+        unique: true,
+        fields: ["tutor_id", "student_id"],
+      },
+    ],
+  }
 );
 
 TutorInfo.hasMany(ReseñasTutor, { foreignKey: "tutor_id", as: "reviews" });

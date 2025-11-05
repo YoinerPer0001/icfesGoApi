@@ -10,7 +10,11 @@ class ReseñasTutorRepository {
     return await ReseñasTutor.findAll({
       where: { tutor_id },
       include: [
-        { model: TutorInfo, as: "tutor_info", attributes: { exclude: excludeInfo } },
+        {
+          model: TutorInfo,
+          as: "tutor_info",
+          attributes: { exclude: excludeInfo },
+        },
         { model: User, as: "student", attributes: { exclude: excludeInfo } },
       ],
       attributes: { exclude: excludeInfo },
@@ -24,8 +28,22 @@ class ReseñasTutorRepository {
     });
   }
 
-  async create(data: CreationAttributes<ReseñasTutor>): Promise<ReseñasTutor> {
-    return await ReseñasTutor.create(data);
+  async create(
+    data: CreationAttributes<ReseñasTutor>,
+    options?: { transaction?: Transaction }
+  ): Promise<ReseñasTutor> {
+    return await ReseñasTutor.create(data, {
+      transaction: options?.transaction ?? null,
+    });
+  }
+
+  async updateOrCreate(
+    data: CreationAttributes<ReseñasTutor>,
+    options?: { transaction?: Transaction }
+  ): Promise<[ReseñasTutor, boolean | null]> {
+
+    return await ReseñasTutor.upsert(data, {transaction: options?.transaction ?? null});
+
   }
 
   async delete(id: string): Promise<number> {
