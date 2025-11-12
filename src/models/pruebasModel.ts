@@ -21,4 +21,5 @@ Pruebas.init(
   }
 );
 
+
 export default Pruebas;

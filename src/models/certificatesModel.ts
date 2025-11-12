@@ -22,6 +22,10 @@ Certificates.init({
     },
     url_resource:{
         type: DataTypes.TEXT,
+    },
+    file_id:{
+        type: DataTypes.STRING(100),
+        allowNull: false
     }
 
 }, {sequelize: db, modelName: "certificates"})

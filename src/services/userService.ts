@@ -32,6 +32,24 @@ class UserService {
       return new ApiResponse(500, (error as Error).message, null);
     }
   }
+
+  async getStudentInfo(userId: string): Promise<ApiResponse<User | null>> {
+    try {
+      const result = await userRepository.getStudentInfo(userId)
+      return new ApiResponse(200, "success", result);
+    } catch (error) {
+       return new ApiResponse(500, (error as Error).message, null);
+    }
+  }
+
+  async getTutorInfo(userId: string): Promise<ApiResponse<User | null>> {
+    try {
+      const result = await userRepository.getTutorInfo(userId)
+      return new ApiResponse(200, "success", result);
+    } catch (error) {
+       return new ApiResponse(500, (error as Error).message, null);
+    }
+  }
 }
 
 export default new UserService();

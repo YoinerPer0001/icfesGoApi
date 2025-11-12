@@ -24,6 +24,19 @@ class CertificatesRepository {
     return await Certificates.create(data, {transaction: options?.transaction ?? null});
   }
 
+  async upsert(
+  data: CreationAttributes<Certificates>,
+  options?: { transaction?: Transaction | null }
+): Promise<Certificates> {
+  const [record] = await Certificates.upsert(data, {
+    transaction: options?.transaction ?? null,
+    returning: true, // necesario para obtener el registro resultante
+  });
+
+  return record;
+}
+
+
   async delete(id: string): Promise<number> {
     return await Certificates.destroy({ where: { id } });
   }

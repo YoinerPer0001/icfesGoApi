@@ -84,7 +84,7 @@ class StudentInfoRepository {
     options?: { transaction?: Transaction | null }
   ): Promise<[affectedCount: number]> {
     return await StudentInfo.update(data, {
-      where: { id },
+      where: { user_id:id },
       transaction: options?.transaction || null,
     });
   }
@@ -97,6 +97,19 @@ class StudentInfoRepository {
   return await StudentInfo.create(data, { transaction: options?.transaction || null });
   
 }
+
+async Upsert(
+  data: Partial<CreationAttributes<StudentInfo>>,
+  options?: { transaction?: Transaction | null }
+): Promise<StudentInfo> {
+  const [instance] = await StudentInfo.upsert(data, {
+    transaction: options?.transaction || null,
+    returning: true,
+  });
+
+  return instance;
+}
+
 
 
   /**

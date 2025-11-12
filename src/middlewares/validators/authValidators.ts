@@ -17,6 +17,11 @@ export const createStudentDataValidator = [
   .exists().withMessage("photo_url is required")
   .isURL().withMessage("photo_url must be a url"),
 
+   body("dataUser.file_id")
+  .exists().withMessage("file_id is required")
+  .isString().withMessage("file_id must be a string"),
+  
+
 
   body("dataStudent")
     .exists().withMessage("dataStudent is required")
@@ -80,7 +85,7 @@ export const createTutorDataValidator = [
   body("dataTutor.sesiones_type")
     .exists().withMessage("sesiones_type is required")
     .isString().withMessage("sesiones_type must be a string")
-    .isIn(["presenciales", "virtuales", "mixtas"]).withMessage("sesiones_type must be one of: presenciales, virtuales, mixtas"),
+    .isIn(["presenciales", "virtuales", "presenciales y virtuales"]).withMessage("sesiones_type must be one of: presenciales, virtuales, mixtas"),
 
   // Validación de certificates
   body("certificates")
@@ -94,6 +99,10 @@ export const createTutorDataValidator = [
   body("certificates.*.name")
     .exists().withMessage("name is required")
     .isString().withMessage("name must be a valid string"),
+
+  body("certificates.*.file_id")
+  .exists().withMessage("file_id is required")
+  .isString().withMessage("file_id must be a valid string"),
 
   // Validación de listAreas
   body("listAreas")

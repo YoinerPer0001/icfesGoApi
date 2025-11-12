@@ -4,6 +4,34 @@ import { ApiResponse } from "../core/responseSchedule.js";
 import userService, { type FiltersTutors } from "../services/userService.js";
 
 class UserController {
+
+  async getStudentInfo(req: Request, res: Response) {
+    try {
+
+      const uid = (req as any).uid;
+
+      const response = await userService.getStudentInfo(uid);
+      res.status(response.code).json(response);
+      
+    } catch (error) {
+      res.status(500).json({ message: error, data: {} });
+    }
+  }
+
+  async getTutorInfo(req: Request, res: Response) {
+    try {
+
+      const uid = (req as any).uid;
+
+      const response = await userService.getTutorInfo(uid);
+      res.status(response.code).json(response);
+      
+    } catch (error) {
+      res.status(500).json({ message: error, data: {} });
+    }
+  }
+
+
   async getAllTutors(req: Request, res: Response) {
     try {
       const {

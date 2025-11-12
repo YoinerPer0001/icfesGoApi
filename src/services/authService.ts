@@ -21,6 +21,7 @@ import tutorInfoRepository from "../repository/tutorInfoRepository.js";
 import paymentInfoRepository from "../repository/paymentInfoRepository.js";
 import type Certificates from "../models/certificatesModel.js";
 import certificatesRepository from "../repository/certificatesRepository.js";
+import imagekit from "../core/imageKit.js";
 
 interface DataSendLogin {
   name: string;
@@ -160,8 +161,9 @@ class AuthService {
 
       dataStudent.user_id = user.dataValues.id;
 
-      const studentUpdate =
-        await studentInfoRepository.Create(dataStudent, {transaction});
+      const studentUpdate = await studentInfoRepository.Create(dataStudent, {
+        transaction,
+      });
       if (!studentUpdate) {
         console.log(studentUpdate);
         transaction.rollback();
@@ -201,6 +203,97 @@ class AuthService {
       };
 
       return new ApiResponse(200, "success", dataSend);
+    } catch (error) {
+      transaction.rollback();
+      return new ApiResponse(500, (error as Error).message, null);
+    }
+  }
+
+  async UpdateStudentInfoPerfil(
+    id_user: string,
+    dataUser?: Partial<CreationAttributes<User>>, //ciudad
+    dataStudent?: Partial<CreationAttributes<StudentInfo>>, //id_grado y test_type_id
+    listAreas?: Array<Partial<CreationAttributes<Areas>>> // lista name areas
+  ): Promise<ApiResponse<DataSendLogin | null>> {
+    const transaction = await db.transaction();
+
+    try {
+      const user = await userRepository.findByFirebaseId(id_user);
+      console.log(user);
+
+      if (!user) {
+        return new ApiResponse(403, "client error: invalid user", null);
+      }
+
+      if (dataStudent != null) {
+        dataStudent.user_id = user.dataValues.id;
+
+        const studentUpdate = await studentInfoRepository.updateStudentInfo(
+          user.dataValues.id,
+          dataStudent,
+          {
+            transaction,
+          }
+        );
+        if (!studentUpdate) {
+          console.log(studentUpdate);
+          transaction.rollback();
+          return new ApiResponse(500, "server error: update Student", null);
+        }
+      }
+
+      if (listAreas != null) {
+        // first delete all areas of user
+        const deleted = await userAreasRepository.deleteByUserId(
+          user.dataValues.id,
+          {
+            transaction,
+          }
+        );
+
+        if (deleted === null) {
+          transaction.rollback();
+          return new ApiResponse(500, "server error: delete areas", null);
+        }
+
+        for (let area of listAreas) {
+          area.id_user = user.dataValues.id;
+          console.log(area);
+          const createUserAreas = await userAreasRepository.upsert(area, {
+            transaction,
+          });
+          if (!createUserAreas) {
+            transaction.rollback();
+            return new ApiResponse(500, "server error: create areas", null);
+          }
+        }
+      }
+
+      if (dataUser != null) {
+
+        if(dataUser.photo_url != null){
+          const deleted = await imagekit.deleteFile(user.dataValues.file_id)
+          console.log(deleted)
+          if(!deleted){
+            await imagekit.deleteFile(dataUser.file_id)
+            transaction.rollback();
+            return new ApiResponse(500, "server error: delete image", null);
+          }
+        }
+        const userUpdated = await userRepository.update(
+          user.dataValues.id,
+          dataUser,
+          { transaction }
+        );
+        if (!userUpdated) {
+          transaction.rollback();
+          return new ApiResponse(500, "server error: update User", null);
+        }
+      }
+
+      transaction.commit();
+
+      return new ApiResponse(200, "success", null);
     } catch (error) {
       transaction.rollback();
       return new ApiResponse(500, (error as Error).message, null);
@@ -248,8 +341,7 @@ class AuthService {
 
       //4- create or update tutorInfo
       dataTutor.user_id = user.dataValues.id;
-      const updatedTutorInfo =
-        await tutorInfoRepository.create(dataTutor);
+      const updatedTutorInfo = await tutorInfoRepository.create(dataTutor);
 
       if (!updatedTutorInfo) {
         console.log(updatedTutorInfo);
@@ -260,14 +352,126 @@ class AuthService {
       console.log(updatedTutorInfo);
 
       //5- create certificates
-     
+
       for (let certificate of certificates) {
         certificate.tutor_id = updatedTutorInfo.dataValues.id;
-        const createdCertificates = await certificatesRepository.create(certificate, {transaction});
-        console.log(certificate)
+        const createdCertificates = await certificatesRepository.create(
+          certificate,
+          { transaction }
+        );
+        console.log(certificate);
         if (!createdCertificates) {
           transaction.rollback();
           return new ApiResponse(500, "server error: create areas", null);
+        }
+      }
+
+      transaction.commit();
+
+      const dataSend = {
+        name: user.dataValues.name + " " + user.dataValues.last_name,
+        email: user.dataValues.email,
+        rol: user.dataValues.rol.name,
+        perfil_completed: true,
+      };
+
+      return new ApiResponse(200, "success", dataSend);
+    } catch (error) {
+      transaction.rollback();
+      return new ApiResponse(500, (error as Error).message, null);
+    }
+  }
+
+  async updateTutorInfoPerfil(
+    fb_id: string,
+    dataUser?: Partial<CreationAttributes<User>>,
+    dataTutor?: Partial<CreationAttributes<TutorInfo>>,
+    areas?: Array<Partial<CreationAttributes<Areas>>>,
+    certificates?: Array<Partial<CreationAttributes<Certificates>>>
+  ): Promise<ApiResponse<DataSendLogin | null>> {
+    const transaction = await db.transaction();
+    try {
+      //1 find user
+      const user = await userRepository.findByFirebaseId(fb_id);
+      if (!user) {
+        return new ApiResponse(403, "client error: invalid user", null);
+      }
+
+      if (dataUser != null) {
+        //2 update user
+        if(dataUser.photo_url != null){
+          const deleted = await imagekit.deleteFile(user.dataValues.file_id)
+          console.log(deleted)
+          if(!deleted){
+            await imagekit.deleteFile(dataUser.file_id)
+            transaction.rollback();
+            return new ApiResponse(500, "server error: delete image", null);
+          }
+        }
+        dataUser.perfil_completed = true;
+        const userUpdated = await userRepository.update(
+          user.dataValues.id,
+          dataUser,
+          { transaction }
+        );
+
+        if (!userUpdated) {
+          return new ApiResponse(500, "server error: update user", null);
+        }
+      }
+
+      if (areas != null) {
+        // first delete all areas of user
+        const deleted = await userAreasRepository.deleteByUserId(
+          user.dataValues.id,
+          {
+            transaction,
+          }
+        );
+
+        if (deleted === null) {
+          transaction.rollback();
+          return new ApiResponse(500, "server error: delete areas", null);
+        }
+
+        for (let area of areas) {
+          area.id_user = user.dataValues.id;
+          console.log(area);
+          const createUserAreas = await userAreasRepository.upsert(area, {
+            transaction,
+          });
+          if (!createUserAreas) {
+            transaction.rollback();
+            return new ApiResponse(500, "server error: create areas", null);
+          }
+        }
+      }
+
+      if (dataTutor != null) {
+        //4- create or update tutorInfo
+        dataTutor.user_id = user.dataValues.id;
+        const updatedTutorInfo = await tutorInfoRepository.update(user.dataValues.id, dataTutor, { transaction });
+
+        if (!updatedTutorInfo) {
+          console.log(updatedTutorInfo);
+          transaction.rollback();
+          return new ApiResponse(500, "server error: update tutor", null);
+        }
+      }
+
+      if (certificates != null) {
+        //5- create certificates
+
+        for (let certificate of certificates) {
+          const createdCertificates = await certificatesRepository.upsert(
+            certificate,
+            { transaction }
+          );
+          console.log(certificate);
+          if (!createdCertificates) {
+            transaction.rollback();
+            return new ApiResponse(500, "server error: create areas", null);
+          }
         }
       }
 

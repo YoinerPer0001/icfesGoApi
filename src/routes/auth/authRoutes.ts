@@ -12,6 +12,8 @@ authRouter.post('/register', authenticateFirebase, userCreateValidator, AuthCont
 authRouter.post('/auth', authenticateFirebase, AuthController.signImageKit)
 authRouter.put("/auth/student/update",  authenticateFirebase, createStudentDataValidator, AuthController.updateStudentInfo)
 authRouter.put("/auth/tutor/update",  authenticateFirebase, createTutorDataValidator, AuthController.updateTutorInfo)
+authRouter.put("/auth/student/perfil/update",  authenticateFirebase, AuthController.updateStudentInfoPerfil)
+authRouter.put("/auth/tutor/perfil/update",  authenticateFirebase, AuthController.updateTutorInfoPerfil)
   
 
 export default authRouter;

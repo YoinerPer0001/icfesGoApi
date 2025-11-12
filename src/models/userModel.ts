@@ -56,6 +56,10 @@ User.init(
     photo_url: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    file_id:{
+      type: DataTypes.STRING(100),
+      allowNull: true
     }
   },
   {

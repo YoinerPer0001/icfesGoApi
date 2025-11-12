@@ -19,8 +19,25 @@ class UserAreasRepository {
     });
   }
 
+  async upsert(
+  data: CreationAttributes<UserAreas>,
+  options?: { transaction?: Transaction | null }
+): Promise<UserAreas> {
+  const [record] = await UserAreas.upsert(data, {
+    transaction: options?.transaction || null,
+    returning: true,
+  });
+
+  return record;
+}
+
+
   async delete(id_user: string, id_area: string): Promise<number> {
     return await UserAreas.destroy({ where: { id_user, id_area } });
+  }
+
+  async deleteByUserId(id_user: string, options?: { transaction?: Transaction | null }): Promise<number> {
+    return await UserAreas.destroy({ where: { id_user }, transaction: options?.transaction || null });
   }
 }
 

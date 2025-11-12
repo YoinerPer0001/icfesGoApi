@@ -49,7 +49,7 @@ class TutorInfoRepository {
     options?: { transaction?: Transaction | null }
   ): Promise<number> {
     const [affectedRows] = await TutorInfo.update(data, {
-      where: { id },
+      where: { user_id: id },
       transaction: options?.transaction ?? null,
     });
     return affectedRows;
@@ -68,6 +68,19 @@ class TutorInfoRepository {
       { transaction: options?.transaction || null }
     );
   }
+
+  async upsert(
+  data: Partial<CreationAttributes<TutorInfo>>,
+  options?: { transaction?: Transaction | null }
+): Promise<TutorInfo | null> {
+  const [record] = await TutorInfo.upsert(data, {
+    transaction: options?.transaction || null,
+    returning: true, // asegura que Sequelize devuelva el registro
+  });
+
+  return record;
+}
+
 }
 
 export default new TutorInfoRepository();

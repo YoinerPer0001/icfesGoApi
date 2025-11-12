@@ -10,6 +10,7 @@ export const validateResult = (req:Request, res:Response, next:NextFunction) => 
         return next()
     } catch (error) {
         const validateErrors = (error as any).errors ?? [];
+        console.log(validateErrors)
         res.status(400).json(new ApiResponse(400, validateErrors, {}))
     }
 }
