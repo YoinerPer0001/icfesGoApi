@@ -271,7 +271,7 @@ class AuthService {
 
       if (dataUser != null) {
 
-        if(dataUser.photo_url != null){
+        if(dataUser.photo_url != null && user.dataValues.file_id != null){
           const deleted = await imagekit.deleteFile(user.dataValues.file_id)
           console.log(deleted)
           if(!deleted){
@@ -399,7 +399,7 @@ class AuthService {
 
       if (dataUser != null) {
         //2 update user
-        if(dataUser.photo_url != null){
+        if(dataUser.photo_url != null && user.dataValues.file_id != null){
           const deleted = await imagekit.deleteFile(user.dataValues.file_id)
           console.log(deleted)
           if(!deleted){

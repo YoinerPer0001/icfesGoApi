@@ -93,6 +93,7 @@ class AuthController {
       const uid = (req as any).uid;
       const body = req.body
       const response = await authService.UpdateStudentInfo(uid,body.dataUser,body.dataStudent, body.listAreas)
+      console.log(response)
       res.status(response.code).json(response);
 
     } catch (error) {
@@ -108,6 +109,7 @@ class AuthController {
       console.log(body)
       console.log(uid)
       const response = await authService.UpdateStudentInfoPerfil(uid,body.dataUser,body.dataStudent, body.listAreas)
+      console.log(response)
       res.status(response.code).json(response);
 
     } catch (error) {
