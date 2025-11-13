@@ -1,5 +1,7 @@
 import { ApiResponse } from "../core/responseSchedule.js";
+import type TutorInfo from "../models/tutorInfoModel.js";
 import type User from "../models/userModel.js";
+import tutorInfoRepository from "../repository/tutorInfoRepository.js";
 import userRepository from "../repository/userRepository.js";
 
 interface ResponseTutor {
@@ -26,7 +28,7 @@ class UserService {
     filters?: FiltersTutors
   ): Promise<ApiResponse<ResponseTutor | null>> {
     try {
-      const response = await userRepository.getTutors(page, limit, filters);
+      const response = await tutorInfoRepository.getTutors(page, limit, filters);
       return new ApiResponse(200, "success", response);
     } catch (error) {
       return new ApiResponse(500, (error as Error).message, null);

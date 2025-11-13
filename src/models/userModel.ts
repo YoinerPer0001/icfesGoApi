@@ -5,8 +5,6 @@ import Cities from "./citiesModel.js";
 
 class User extends Model {}
 
-// Cuando se crea un user, algunos campos pueden ser opcionales
-// interface UserCreationAttributes extends Optional<UserAttributes, "attempts_remaining" | "last_attempt_reset"> {}
 
 User.init(
   {
