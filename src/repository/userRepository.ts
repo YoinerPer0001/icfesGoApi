@@ -18,6 +18,7 @@ import { ApiResponse } from "../core/responseSchedule.js";
 import StudentInfo from "../models/StudentInfoModel.js";
 import Pruebas from "../models/pruebasModel.js";
 import Grados from "../models/gradosModel.js";
+import Simulacros from "../models/simulacrosModel.js";
 
 const excludeInfo = ["createdAt", "updatedAt"];
 

@@ -11,18 +11,26 @@ import AreasRoutes from './routes/areasRoutes.js';
 import UserRoutes from './routes/userRoutes.js';
 import ReseñasRoutes from './routes/reseñasRoutes.js';
 import CertificatesRoutes from './routes/certificatesRoutes.js';
-
-interface City {
-  id: number,
-  name: string,
-  description: string,
-  departmentId: number,
-}
+import SimulacrosRoutes from './routes/simulacrosRoutes.js';
+import IntentosRoutes from './routes/intentosRoutes.js';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
+import { registerSocketHandlers } from './sockets/config.js';
 
 dotenv.config();
 
 const rootUrl = '/api';
 const app = express();
+
+//socket io configuration
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+  }
+});
+
+registerSocketHandlers(io)
 
 const PORT: number = parseInt(process.env.PORT ?? "3000") ;
 
@@ -44,8 +52,10 @@ app.use(rootUrl, AreasRoutes)
 app.use(rootUrl, UserRoutes)
 app.use(rootUrl, ReseñasRoutes)
 app.use(rootUrl, CertificatesRoutes)
+app.use(rootUrl, SimulacrosRoutes)
+app.use(rootUrl, IntentosRoutes)
 
-app.listen(PORT, ()=>{
+httpServer.listen(PORT, ()=>{
   console.info(`Success server in port : ${PORT}`)
 })
 
