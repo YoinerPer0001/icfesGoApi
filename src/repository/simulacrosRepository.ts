@@ -94,8 +94,15 @@ class SimulacrosRepository {
         {
           model: Intentos,
           as: "intentos",
-          attributes: { exclude: ["createdAt", "updatedAt", "simulacro_id"] },
+          separate: true,
+          where: { id_user: creator },
+          required: false,
+          attributes: { exclude: ["id_user", "updatedAt", "simulacro_id"] },
           include: [
+            {
+              model: User, as: "user",
+              attributes: ["photo_url","name", "last_name"]
+            },
             {
               model: UserAnswers,
               as: "user_answers",
@@ -123,6 +130,7 @@ class SimulacrosRepository {
       ],
       limit,
       offset,
+      order: [["createdAt", "DESC"]]
     });
 
     return {
@@ -167,8 +175,12 @@ class SimulacrosRepository {
         {
           model: Intentos,
           as: "intentos",
-          attributes: { exclude: ["createdAt", "updatedAt", "simulacro_id"] },
+          attributes: { exclude: [ "id_user", "updatedAt", "simulacro_id"] },
           include: [
+            {
+              model: User, as: "user",
+              attributes: ["photo_url","name", "last_name"]
+            },
             {
               model: UserAnswers,
               as: "user_answers",

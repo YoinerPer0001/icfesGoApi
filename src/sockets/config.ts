@@ -76,7 +76,7 @@ function createRoom(io: Server, socket: GameSocket) {
       const userData = await FirebaseTokenVerification(data.token);
       const user = await userRepository.findByFirebaseId(userData.data?.uid ?? "");
 
-      if (userData.data != null) {
+      if (user && userData.data != null) {
         const userName = user?.dataValues.name + " " + user?.dataValues.last_name;
         const uid = userData.data.uid;
 
@@ -323,8 +323,8 @@ export function getQuestionsRooms(io: Server, socket: GameSocket) {
 
             const intento: IntentosDto = {
               intento : {
-                simulacro_id: "",
-                score : 500
+                simulacro_id: dataSend.simulacro_id,
+                score : p.score
               },
               answers: dataSend.answersOptions
             }
@@ -356,6 +356,8 @@ export function CheckQuestion(io: Server, socket: GameSocket) {
     try {
       if (typeof data === "string") data = JSON.parse(data);
 
+      console.log(data)
+
       const userData = await FirebaseTokenVerification(data.token);
       const uid = userData.data?.uid ?? "";
       const name = userData.data?.name ?? "";
@@ -363,12 +365,18 @@ export function CheckQuestion(io: Server, socket: GameSocket) {
       const room = rooms.get(data.code);
       if (!room) return;
 
+      console.log(room)
+
       const index = room.actualQuestionIndex - 1;
       const question = room.questions[index];
 
+      console.log(question)
+
       const selectedAnswer = question?.dataValues.answers.find(
-        (a: Answers) => a.dataValues.answer_id === data.answer_id
+        (a: Answers) => a.dataValues.id === data.answer_id
       );
+
+      console.log(selectedAnswer)
 
       const player = room.players.find((p) => p.id === uid);
 
@@ -377,7 +385,7 @@ export function CheckQuestion(io: Server, socket: GameSocket) {
       if (!selectedAnswer) {
         player.answers?.push({
           answer_id: null,
-          question_id: question?.dataValues.question_id,
+          question_id: question?.dataValues.id,
         });
 
         callback({
@@ -388,8 +396,8 @@ export function CheckQuestion(io: Server, socket: GameSocket) {
       }
 
       player.answers?.push({
-        answer_id: selectedAnswer.answer_id,
-        question_id: question?.dataValues.question_id,
+        answer_id: selectedAnswer.id,
+        question_id: question?.dataValues.id,
       });
 
       const isCorrect = selectedAnswer.is_correct;
@@ -453,6 +461,7 @@ async function handlePlayerLeave(
   room.players = room.players.filter((p) => p.id !== uid);
 
   if (uid === room.hostId) {
+    console.log("host abandono")
     io.to(roomCode).emit("host_leave", { name: userName });
   } else {
     io.to(roomCode).emit("player_leave", {

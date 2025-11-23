@@ -7,6 +7,6 @@ const SimulacrosRoutes = express.Router()
 SimulacrosRoutes.get("/simulacros/user", authenticateFirebase, simulacrosController.getByCreator)
 SimulacrosRoutes.get("/simulacros/publics", authenticateFirebase, simulacrosController.getPublic)
 SimulacrosRoutes.post("/simulacros/create", authenticateFirebase, simulacrosController.create)
-SimulacrosRoutes.delete("/simulacro/delete", authenticateFirebase, simulacrosController.delete)
+SimulacrosRoutes.delete("/simulacros/delete", authenticateFirebase, simulacrosController.delete)
 
 export default SimulacrosRoutes

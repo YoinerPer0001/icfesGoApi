@@ -28,6 +28,7 @@ class SimulacrosController {
         limit,
         area
       );
+      console.log(response)
       res.status(response.code).json(response);
     } catch (error) {
       res.status(500).json({ message: error, data: null });
@@ -39,6 +40,8 @@ class SimulacrosController {
       const page: number = Number(req.query.page ?? 1);
       const limit: number = Number(req.query.limit ?? 1);
       const area = req.query.area as string;
+
+      console.log("PUBLICOSSS")
 
       const response = await simulacrosService.getPublic(
         page,
